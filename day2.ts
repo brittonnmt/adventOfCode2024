@@ -14,13 +14,28 @@ list.split('\n').map(item => {
 let safe: number = 0;
 let unsafe: number = 0;
 
-rows.map(row => {
+rows.forEach((row, rowKey) => {
   let allow: boolean = true;
-  row.forEach((value, key) => {
-    if (allow && row[key + 1]) {
-      allow = !!(Math.abs(value - row[key + 1]) <= 2);
+  let direction: string = 'positive';
+
+  row.forEach((column, columnKey) => {
+ 
+    if (allow && row[columnKey + 1]) {
+      const diff: number = column - row[columnKey + 1];
+      const dc = diff > 0 ? 'positive' : 'negative';
+      if(columnKey === 0) {
+        direction = dc;
+      } else if (direction !== dc) {
+        allow = false;
+        return;
+      }
+            
+      const plusMinus3: boolean = Math.abs(diff) <= 3;
+      const exactMatch: boolean = column === row[columnKey + 1];
+      allow = plusMinus3 && !exactMatch;
     }    
   });
+
   allow ? safe++ : unsafe++;
 });
 
